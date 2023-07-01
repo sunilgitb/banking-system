@@ -43,7 +43,7 @@
 
 <body>
     <div class="dashboard-header">
-        <h2 class="text-center">Welcome, {{ Auth::user()->name }}!</h2>
+        <h2 class="text-center">Hello, {{ Auth::user()->name }}!</h2>
 
     </div>
     <div class="container">
