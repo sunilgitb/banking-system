@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Account;
 use Illuminate\Support\Facades\Auth;
+use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Support\Facades\Session;
 
 
 class CustomerController extends Controller
@@ -30,25 +32,6 @@ class CustomerController extends Controller
         }
     }
 
-    public function showTransactions()
-    {
-        $user = auth()->user();
-
-        return view('dashboard', ['user' => $user]);
-    }
-
-    // public function deposit(Request $request)
-    // {
-    //     $user = auth()->user();
-    //     $account = $user->account;
-    //     $amount = $request->input('amount');
-
-    //     // Update the account balance
-    //     $account->balance += $amount;
-    //     $account->save();
-
-    //     return redirect()->route('customer.withdraw')->with('success', 'Deposit successful!');
-    // }
     public function deposit(Request $request)
     {
         $user = Auth::user();
@@ -59,26 +42,41 @@ class CustomerController extends Controller
         $account = new Account;
         $account->user_id = $user->id;
         $account->balance += $amount;
+        $account->transaction_type = 'deposit';
         $account->save();
-
-        return redirect()->route('customer.withdraw')->with('success', 'Deposit successful!');
+        return back()->with('success', 'Deposit successful!');
+        // Session::flash('success', 'Deposit successful!');
     }
 
+    // public function withdraw(Request $request)
+    // {
+    //     $user = Auth::user();
+    //     $account = $user->account;
+    //     $amount = $request->input('amount');
 
+    //     if ($account->balance < $amount) {
+    //         return redirect()->route('customer.withdraw')->with('error', 'Insufficient funds!');
+    //     }
+
+    //     $account->balance -= $amount;
+    //     $account->save();
+
+    //     return back()->with('success', 'Withdraw successful!');
+    // }
 
     public function withdraw(Request $request)
     {
-        $user = auth()->user();
-        $account = $user->account;
+        $user = Auth::user();
+
         $amount = $request->input('amount');
 
-        if ($account->balance < $amount) {
-            return redirect()->route('customer.withdraw')->with('error', 'Insufficient funds!');
-        }
 
+        // Update the account balance
+        $account = new Account;
+        $account->user_id = $user->id;
         $account->balance -= $amount;
+        $account->transaction_type = 'withdraw';
         $account->save();
-
-        return redirect()->route('customer.withdraw')->with('success', 'Withdrawal successful!');
+        return back()->with('success', 'Withdraw successful!');
     }
 }

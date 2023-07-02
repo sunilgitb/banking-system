@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Account extends Model
 {
     use HasFactory;
-
+    protected $fillable = ['user_id', 'balance', 'transaction_type'];
     public function user()
     {
         return $this->belongsTo(User::class);

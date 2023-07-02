@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\BankController;
+use App\Http\Controllers\BankerController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\HomeController;
 
@@ -30,7 +30,7 @@ require __DIR__ . '/auth.php';
 //     ->middleware('auth')
 //     ->name('logout');
 
-Route::get('/home', [HomeController::class, 'index']);
+Route::get('/home', [BankerController::class, 'index']);
 // Customer login
 Route::get('/customer/login', [CustomerController::class, 'showLoginForm'])->name('customer.login');
 Route::post('/customer/login', [CustomerController::class, 'login']);
@@ -41,13 +41,14 @@ Route::middleware('auth')->group(function () {
     Route::post('/customer/deposit', [CustomerController::class, 'deposit'])->name('customer.deposit');
     Route::post('/customer/withdraw', [CustomerController::class, 'withdraw'])->name('customer.withdraw');
 });
-// Route::get('/customer/transactions', [CustomerController::class, 'showTransactions'])->name('customer.transactions');
-// Route::post('/customer/deposit', [CustomerController::class, 'deposit'])->name('customer.deposit');
-// Route::post('/customer/withdraw', [CustomerController::class, 'withdraw'])->name('customer.withdraw');
+
 
 Route::get('/banker/login', [BankController::class, 'showLoginForm'])->name('banker.login');
 Route::post('/banker/login', [BankController::class, 'login'])->name('banker.login.submit');
 Route::middleware('auth:banker')->group(function () {
-    Route::get('/banker/accounts', [BankController::class, 'showAccounts'])->name('banker.accounts');
+    // Route::get('/banker/accounts', [BankController::class, 'showAccounts'])->name('banker.accounts');
     Route::get('/banker/accounts/{user}', [BankController::class, 'showTransactions'])->name('banker.accounts.transactions');
+    Route::get('/accounts', [BankerController::class, 'accounts'])->name('banker.accounts');
 });
+
+Route::get('/transactions/{userId}', [BankerController::class, 'userTransactions'])->name('banker.user.transactions');

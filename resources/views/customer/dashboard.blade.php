@@ -42,14 +42,33 @@
 </head>
 
 <body>
+
+    @if (session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+    @endif
+
+    <div class="text-center logout-button" style="float: right">
+    <form action="{{ route('logout') }}" method="POST">
+        @csrf
+        <button type="submit" class="btn btn-danger">Logout</button>
+    </form>
+    </div>
     <div class="dashboard-header">
         <h2 class="text-center">Hello, {{ Auth::user()->name }}!</h2>
 
     </div>
     <div class="container">
+
         <div class="balance-container">
-            <h3 class="mb-0">Total Balance:</h3>
-            <h2>{{$totalBalance }}</h2> <!-- Replace with dynamic balance value -->
+            <h3 class="mb-0">Available Balance:</h3>
+            <h2>{{$totalBalance }}</h2>
+            @if (session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+            @endif
         </div>
 
         <!-- Deposit Popup -->
@@ -59,7 +78,8 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="depositModalLabel">Deposit Funds</h5>
+                        <h5 class="modal-title" id="depositModalLabel">Available Balance: {{$totalBalance }}</h5><br>
+
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -85,13 +105,14 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="withdrawModalLabel">Withdraw Funds</h5>
+                        <h5 class="modal-title" id="withdrawModalLabel"><h5 class="modal-title" id="depositModalLabel">Available Balance: {{$totalBalance }}</h5><br></h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form action="{{route('customer.withdraw')}}" method="POST">
+                      <form action="{{ route('customer.withdraw') }}" method="POST">
+                        @csrf
                             @csrf
                             <div class="form-group">
                                 <label for="withdrawAmount">Amounts:</label>
@@ -106,37 +127,70 @@
 
         <!-- Transaction Records -->
         <div class="transaction-table">
-            <h2 class="text-center">Transaction Records</h2>
+            <h2 class="text-center table">Transaction Records</h2>
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Amount</th>
-                        <th>Type</th>
                         <th>Date</th>
+                        <th>Transaction Type</th>
+                        <th>Amount</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($usersWithTotalTransactions as $transaction)
+                  @foreach ($CustomersTransactions as $transaction)
                     <tr>
-                        <td>{{ $transaction->name }}</td>
-                        <td>{{ $transaction->transactions_count }}</td>
-                        <td>{{ $transaction->balance }}</td>
                         <td>{{ $transaction->created_at }}</td>
+                        <td>{{ $transaction->transaction_type }}</td>
+                        <td>{{ $transaction->balance }}</td>
                     </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
 
-        <div class="text-center logout-button">
-            <h2>Hello, {{ Auth::user()->name }}</h2>
-            <form action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button type="submit" class="btn btn-danger">Logout</button>
-            </form>
-        </div>
+        <
     </div>
+
+    <style>
+        body {
+            background-color: blue;
+        }
+
+        .table {
+        color: white;
+        }
+        .transaction-table table {
+        color: white;
+        }
+
+        .dashboard-header {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+
+        .balance-container {
+            text-align: center;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .transaction-table {
+            margin-top: 30px;
+        }
+
+        .logout-button {
+            margin-top: 20px;
+        }
+
+        .modal-header {
+            background-color: #f8f9fa;
+            border-bottom: none;
+        }
+
+        .modal-title {
+            font-weight: bold;
+        }
+    </style>
 </body>
 
 </html>
