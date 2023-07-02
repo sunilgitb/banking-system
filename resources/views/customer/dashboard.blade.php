@@ -43,11 +43,7 @@
 
 <body>
 
-    @if (session('success'))
-    <div class="alert alert-success">
-        {{ session('success') }}
-    </div>
-    @endif
+
 
     <div class="text-center logout-button" style="float: right">
     <form action="{{ route('logout') }}" method="POST">
@@ -57,8 +53,13 @@
     </div>
     <div class="dashboard-header">
         <h2 class="text-center">Hello, {{ Auth::user()->name }}!</h2>
-
+        @if (session('success'))
+        <div class="alert alert-success" id="success-message">
+            {{ session('success') }}
+        </div>
+        @endif
     </div>
+
     <div class="container">
 
         <div class="balance-container">
@@ -192,5 +193,9 @@
         }
     </style>
 </body>
-
+<script>
+    setTimeout(function() {
+        document.getElementById('success-message').style.display = 'none';
+    }, 2000);
+</script>
 </html>
